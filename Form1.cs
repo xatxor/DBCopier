@@ -16,24 +16,29 @@ namespace DBCopier
     {
         public SQLiteHelper originalHelper;
         public SQLiteHelper newHelper;
+        private string path;
         public Form1()
         {
             InitializeComponent();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
-            string path;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                path = openFileDialog1.FileName;
-                Connection(path);
+                path = Path.GetDirectoryName(openFileDialog1.FileName);
+                //CopyDB();
+                Connection();
             }
         }
-        private void Connection(string path)
+        private void CopyDB()
         {
-            originalHelper = new SQLiteHelper(Path.GetDirectoryName(path) + @"\\SynDB.sqlite");
-            newHelper = new SQLiteHelper(Path.GetDirectoryName(path) + @"\\ShortSynDB.sqlite");
+            File.Copy(path + @"\\SynDB.sqlite",
+                path + @"\\ShortSynDB.sqlite", true);
+        }
+        private void Connection()
+        {
+            originalHelper = new SQLiteHelper(path + @"\\SynDB.sqlite");
+            newHelper = new SQLiteHelper(path + @"\\ShortSynDB.sqlite");
             originalHelper.CreateConnection();
             newHelper.CreateConnection();
         }

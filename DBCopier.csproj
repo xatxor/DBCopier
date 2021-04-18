@@ -71,8 +71,8 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="img.cs" />
-    <Compile Include="oru.cs" />
+    <Compile Include="Tables\img.cs" />
+    <Compile Include="Tables\oru.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLiteHelper.cs" />
