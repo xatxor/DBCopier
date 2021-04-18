@@ -12,7 +12,7 @@ using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
 
-namespace SynEngine
+namespace DBCopier
 {
     // Для русского Order by
     [SQLiteFunction(FuncType = FunctionType.Collation, Name = "RUSSIAN_COLLATION")]

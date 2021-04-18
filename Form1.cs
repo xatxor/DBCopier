@@ -14,7 +14,8 @@ namespace DBCopier
 {
     public partial class Form1 : Form
     {
-        string path;
+        public SQLiteHelper originalHelper;
+        public SQLiteHelper newHelper;
         public Form1()
         {
             InitializeComponent();
@@ -22,13 +23,20 @@ namespace DBCopier
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string path;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 path = openFileDialog1.FileName;
-                db_name.Text = path;
-                SQLiteConnection.CreateFile(Path.GetDirectoryName(path));
+                Connection(path);
             }
-
+        }
+        private void Connection(string path)
+        {
+            originalHelper = new SQLiteHelper(Path.GetDirectoryName(path) + @"\\SynDB.sqlite");
+            newHelper = new SQLiteHelper(Path.GetDirectoryName(path) + @"\\ShortSynDB.sqlite");
+            originalHelper.CreateConnection();
+            newHelper.CreateConnection();
         }
     }
 }
+
