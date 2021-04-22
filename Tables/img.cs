@@ -8,7 +8,7 @@ namespace DBCopier
 {
     public class img
     {
-        public string Info { get; set; }
-        public byte[] Data { get; set; }
+        public string Info_img { get; set; }
+        public byte[] Data_img { get; set; }
     }
 }

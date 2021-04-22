@@ -487,7 +487,7 @@ namespace DBCopier
 
             foreach (PropertyInfo info in HelpedProperties(obj))
             {
-                if (info.Name.ToUpper().StartsWith("ID_"))
+                if (info.Name.ToUpper().StartsWith("ID"))
                     continue;   //  пропуск поля идентификатора записи
                 else
                 {   // обработка остальных полей записи
@@ -933,7 +933,12 @@ namespace DBCopier
             catch { }
             return badCount;
         }
-
+        public void Vacuum()
+        {
+            var command = CreateCommand();
+            command.CommandText = "vacuum;";
+            command.ExecuteNonQuery();
+        }
         /// <summary>
         /// Загрузка из БД произвольного табличного результата произвольного запроса с параметрами
         /// </summary>
