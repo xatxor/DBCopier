@@ -129,7 +129,7 @@ namespace DBCopier
         }
 
 
-        /// <summary>
+        /// <summary>I
         /// Создание соединения с БД
         /// </summary>
         /// <returns>Соединение с БД</returns>
@@ -142,7 +142,7 @@ namespace DBCopier
         }
 
         SQLiteConnection _con = null;
-        SQLiteConnection con { get
+        public SQLiteConnection con { get
             {
                 if (_con == null)
                 {
@@ -291,7 +291,7 @@ namespace DBCopier
             return o;
         }
 
-        private static DateTime ToDateTime(string value)
+        public static DateTime ToDateTime(string value)
         {
             string format = "yyyy-MM-dd---HH-mm-ss-fff";
 
@@ -673,7 +673,7 @@ namespace DBCopier
         /// <param name="wheres">Строка ограничений для передачи в параметр запроса WHERE</param>
         /// <param name="p">Произвольное количество пар параметров ИМЯ-ЗНАЧЕНИЕ, имена должны совпадать с именами, указанными в WHERES</param>
         /// <returns></returns>
-        public List<T> Select<T>(string wheres="", params object[] p) where T : class
+        public List<T> Select<T>(string columns = "", string wheres="", params object[] p) where T : class
         {
             List<T> ret = new List<T>();
             Type type = typeof(T);
@@ -681,7 +681,7 @@ namespace DBCopier
 
             SQLiteCommand cmd = CreateCommand();
 
-            cmd.CommandText = "SELECT rowid,* FROM " + table + (wheres.Length > 0 ? ("  WHERE " + wheres) : "");
+            cmd.CommandText = "SELECT " /*+ (columns.Length > 0 ? columns : "rowid,*")*/ + "rowid,* FROM " + table + (wheres.Length > 0 ? ("  WHERE " + wheres) : "");
 
             ApplyParamsToCmd(p, cmd);
 
@@ -1043,7 +1043,7 @@ namespace DBCopier
 
         public Kvp[] Load(string like)
         {
-            return helper.Select<Kvp>("Key_kvp LIKE '@like'",new string[] { "@like", like }).ToArray();
+            return helper.Select<Kvp>("", "Key_kvp LIKE '@like'",new string[] { "@like", like }).ToArray();
         }
 
         public void Save(string key, string value)
