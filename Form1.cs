@@ -17,36 +17,64 @@ namespace DBCopier
         public SQLiteHelper originalHelper;
         public SQLiteHelper newHelper;
         private string path;
-        public DateTime UserDate = new DateTime(2021, 1, 1); 
+        private string dbname;
+        public DateTime UserDate;
+        private DateTime Timer = new DateTime(0);
         public Form1()
         {
             InitializeComponent();
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Timer = Timer.AddSeconds(1);
+            timer_label.Text = Timer.ToString("mm:ss");
+        }
+        private void db_open_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                path = Path.GetDirectoryName(openFileDialog1.FileName);
-                CopyDB();
-                Log("бд скопирована");
-                Connection();
-                Log("подключение к бд завершено");
-                DeleteTables();
-                Log("таблицы oru и img очищены");
-                newHelper.Vacuum();
-                Log("вакуум завершен");
-                Transfering();
+                path_label.Text = openFileDialog1.FileName;
             }
+        }
+        private void start_button_Click(object sender, EventArgs e)
+        {
+            if (!path_label.Text.StartsWith("Тут") && date_textbox.Text != "")
+            {
+                try
+                {
+                    timer1.Enabled = true;
+                    path = Path.GetDirectoryName(path_label.Text);
+                    dbname = Path.GetFileName(path_label.Text);
+                    UserDate = DateTime.ParseExact(date_textbox.Text, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    CopyDB();
+                    Log("бд скопирована");
+                    Connection();
+                    Log("подключение к бд завершено");
+                    DeleteTables();
+                    Log("таблицы oru и img очищены");
+                    newHelper.Vacuum();
+                    Log("вакуум завершен");
+                    Transfering();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Возникла ошибка: " + ex.Message);
+                    timer1.Enabled = false;
+                    Timer = new DateTime(0);
+                }
+            }
+            else
+                MessageBox.Show("Выберите файл базы данных и введите дату");
         }
         private void CopyDB()
         {
-            File.Copy(path + @"\\SynDB.sqlite",
-                path + @"\\ShortSynDB.sqlite", true);
+            File.Copy(path + @"\\" + dbname,
+                path + @"\\Short" + dbname, true);
         }
         private void Connection()
         {
-            originalHelper = new SQLiteHelper(path + @"\\SynDB.sqlite");
-            newHelper = new SQLiteHelper(path + @"\\ShortSynDB.sqlite");
+            originalHelper = new SQLiteHelper(path + @"\\" + dbname);
+            newHelper = new SQLiteHelper(path + @"\\Short" + dbname);
             originalHelper.CreateConnection();
             newHelper.CreateConnection();
         }
@@ -90,7 +118,9 @@ namespace DBCopier
                     }
                 }
             });
-            Log("завершено!");
+            timer1.Enabled = false;
+            Timer = new DateTime(0);
+            Log("завершено! время выполнения: " + Timer.ToString("mm:ss"));
         }
         private bool IsLater(string value, DateTime date)
         {
