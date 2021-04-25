@@ -36,7 +36,7 @@ namespace DBCopier
                 path_label.Text = openFileDialog1.FileName;
             }
         }
-        private void start_button_Click(object sender, EventArgs e)
+        private async void start_button_Click(object sender, EventArgs e)
         {
             if (!path_label.Text.StartsWith("Тут") && date_textbox.Text != "")
             {
@@ -46,13 +46,14 @@ namespace DBCopier
                     path = Path.GetDirectoryName(path_label.Text);
                     dbname = Path.GetFileName(path_label.Text);
                     UserDate = DateTime.ParseExact(date_textbox.Text, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
-                    CopyDB();
+                    Log("начало работы!");
+                    await Task.Run(() => CopyDB());
                     Log("бд скопирована");
-                    Connection();
+                    await Task.Run(() => Connection());
                     Log("подключение к бд завершено");
-                    DeleteTables();
+                    await Task.Run(() => DeleteTables());
                     Log("таблицы oru и img очищены");
-                    newHelper.Vacuum();
+                    await Task.Run(() => newHelper.Vacuum());
                     Log("вакуум завершен");
                     Transfering();
                 }
@@ -120,7 +121,7 @@ namespace DBCopier
             });
             timer1.Enabled = false;
             Timer = new DateTime(0);
-            Log("завершено! время выполнения: " + Timer.ToString("mm:ss"));
+            Log("завершено! время выполнения: " + timer_label.Text);
         }
         private bool IsLater(string value, DateTime date)
         {
